@@ -2,7 +2,7 @@
 
 ## April 10th
 
-The first day of this evaluation task, I have been working on the following:
+On the first day of this evaluation task, I have been working on the following:
 
 - [x] Learned basic knowledge of prompt engineering
 - [x] Downloaded the dataset
@@ -11,6 +11,7 @@ The first day of this evaluation task, I have been working on the following:
 ### Conversation Log
 
 user:
+
 ```
 Generate a unit test for the following java code: 
 int doMath(int a, int b){
@@ -20,7 +21,9 @@ int doMath(int a, int b){
     return (b+a)*c;
 }
 ```
+
 ChatGPT:
+
 ```
 Here is an example unit test for the doMath function in Java:
 import org.junit.Test;
@@ -45,11 +48,13 @@ Note that this is just one example test and there may be other edge cases or inp
 ```
 
 user:
+
 ```
 why expected is 280?
 ```
 
 ChatGPT:
+
 ```
 The expected value of 280 is the result of (b+a)*c = (5+3)*8 = 64*8 = 512 after applying the operations inside the doMath function for the input values of a=3 and b=5.
 
@@ -59,11 +64,13 @@ Therefore, the expected result of the doMath function when called with a=3 and b
 ```
 
 user:
+
 ```
 why you say (12+4)*8 = 128*8
 ```
 
 ChatGPT:
+
 ```
 I apologize for my mistake in the previous response. The correct calculation for (b+a)*c when a=4, b=12, and c=8 is:
 
@@ -73,11 +80,13 @@ I hope this clarifies any confusion. Thank you for bringing this to my attention
 ```
 
 user:
+
 ```
 then why you say expected is 280?
 ```
 
 ChatGPT:
+
 ```
 I apologize for the confusion. You are correct that my previous response was incorrect. The expected value should be 128 instead of 280, as calculated in the correction I made earlier.
 
