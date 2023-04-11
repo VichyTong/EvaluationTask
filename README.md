@@ -122,3 +122,19 @@ On the first day's test, I tried to generate a unit test for some math calculati
 - GPT generates good code frame
 
 Maybe because GPT learned a lot of data from the open source codes, it can generate a good code frame. In the example below, GPT generates the right code frame using `@test` and can import the right package.
+
+### Papers read
+
+- [Large Language Models are Zero-Shot Reasoners](https://arxiv.org/abs/2205.11916)
+
+Using the "Let's think step by step" prompt improves the accuracy from 17.1% to 78.7% in a specific question.
+
+- [Decomposed Prompting: A Modular Approach for Solving Complex Tasks](https://arxiv.org/abs/2210.02406)
+
+May be better to decompose our task into several small questions. I can use GPT to solve them recursively.
+
+### Next step
+
+1. Add "Let's think step by step" to the prompts.
+2. Think about how to decompose our 3 questions into several questions, and let GPT follows the workflow. I believe it can do a great job in small work while it fails in general work.
+
