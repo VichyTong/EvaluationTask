@@ -108,3 +108,17 @@ public class DoMathTest {
 Once again, I apologize for the confusion, and I hope this clears up any misunderstandings.
 ```
 
+## April 11th
+
+- [x] Change my platform from ChatGPT to GPT-3.5-turbo API, because ChatGPT is sometimes unstable and too slow.
+- [x] Finish a shell script to randomly select 20 code snippets for Java and Python from the dataset. I will test my work on these snippets.
+
+### Some Phenomenon found
+
+- GPT is not good at Math
+
+On the first day's test, I tried to generate a unit test for some math calculating Java code, but GPT failed to give the right answer in some circumstances. I think this is because GPT is not good at math problems. I will try to find some other ways to solve this problem.
+
+- GPT generates good code frame
+
+Maybe because GPT learned a lot of data from the open source codes, it can generate a good code frame. In the example below, GPT generates the right code frame using `@test` and can import the right package.
