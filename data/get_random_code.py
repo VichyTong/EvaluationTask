@@ -16,7 +16,6 @@ def read_random_lines_from_jsonl_file(file_path):
 if __name__ == "__main__":
     java_code = read_random_lines_from_jsonl_file(java_file_path)
     python_code = read_random_lines_from_jsonl_file(python_file_path)
-    print(java_code)
     with open("java_random_code.jsonl", 'w') as f:
         for code in java_code:
             f.write(json.dumps(code) + '\n')
