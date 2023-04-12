@@ -112,8 +112,9 @@ Once again, I apologize for the confusion, and I hope this clears up any misunde
 
 - [x] Change my platform from ChatGPT to GPT-3.5-turbo API, because ChatGPT is sometimes unstable and too slow.
 - [x] Finish a shell script to randomly select 20 code snippets for Java and Python from the dataset. I will test my work on these snippets.
+- [x] Read some relevant papers
 
-### Some Phenomenon found
+### Some Phenomenon Found
 
 - GPT is not good at Math
 
@@ -123,7 +124,7 @@ On the first day's test, I tried to generate a unit test for some math calculati
 
 Maybe because GPT learned a lot of data from the open source codes, it can generate a good code frame. In the example below, GPT generates the right code frame using `@test` and can import the right package.
 
-### Papers read
+### Papers
 
 - [Large Language Models are Zero-Shot Reasoners](https://arxiv.org/abs/2205.11916)
 
@@ -133,8 +134,120 @@ Using the "Let's think step by step" prompt improves the accuracy from 17.1% to 
 
 May be better to decompose our task into several small questions. I can use GPT to solve them recursively.
 
-### Next step
+### Next Step
 
 1. Add "Let's think step by step" to the prompts.
 2. Think about how to decompose our 3 questions into several questions, and let GPT follows the workflow. I believe it can do a great job in small work while it fails in general work.
 
+## April 12th
+
+- [x] Add "Let's think step by step" to the prompts.
+- [x] Decompose 3 questions
+- [x] Store the conversation in `/log/log.jsonl`
+
+### Difference Between ChatGPT and GPT-3.5-turbo API
+
+GPT-3.5-turbo APT is likely to generate shorter code.
+Here's the response generated with the plain prompt:
+
+```
+Here's an example of a unit test for the `doMath` method:
+
+@Test
+public void testDoMath() {
+    int a = 2;
+    int b = 3;
+    int expected = (b+a)*(a+b+1);
+    int result = doMath(a, b);
+    assertEquals(expected, result);
+}
+
+This test sets up the input values `a` and `b`, calculates the expected result using the same logic as the `doMath` method, calls the `doMath` method with the input values, and then checks that the actual result matches the expected result using the `assertEquals` method.
+```
+
+After I added "Let's think step by step", the response is:
+
+```
+1. First, we need to create a test class and import the necessary packages:
+
+import org.junit.Test;
+import static org.junit.Assert.*;
+public class DoMathTest {
+}
+
+2. Then, we need to create a test method and call the `doMath` method with some input values:
+
+@Test
+public void testDoMath() {
+    int result = doMath(2, 3);
+    assertEquals(60, result);
+}
+
+3. Finally, we need to add some assertions to check if the output is correct:
+
+@Test
+public void testDoMath() {
+    int result = doMath(2, 3);
+    assertEquals(60, result);
+    
+    result = doMath(0, 0);
+    assertEquals(0, result);
+    
+    result = doMath(-2, 5);
+    assertEquals(9, result);
+}
+
+The complete test class would look like this:
+
+import org.junit.Test;
+import static org.junit.Assert.*;
+
+public class DoMathTest {
+    @Test
+    public void testDoMath() {
+        int result = doMath(2, 3);
+        assertEquals(60, result);
+        
+        result = doMath(0, 0);
+        assertEquals(0, result);
+        
+        result = doMath(-2, 5);
+        assertEquals(9, result);
+    }
+}
+```
+
+Although it is wrong, at least it tries to reason.
+
+### Decompose
+
+We need to decompose these three questions.
+
+1. Code Execution
+
+2. Produce Reasonable Unit Tests
+
+3. Produce Semantically Equivalent Code
+
+Question 2 is based on question 1, what's new is that question 2 needs GPT to generate the input. 
+
+Because I don't want to generate the input by myself, let's think about question 2 first.
+
+```mermaid
+graph TB
+	A[Input]
+	B[Analyze the code line by line]
+	1[Generate the input]
+	2[Reasoning the output]
+	3[Generate unit test framework]
+	C[Fill the input and output in the framework]
+	D[Get the unit test]
+	A --> B
+	B --> 1
+	B --> 2
+	B --> 3
+	1 --> C
+	2 --> C
+	3 --> C
+	C --> D
+```
