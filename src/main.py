@@ -20,8 +20,8 @@ def read_code():
 def main():
     read_code()
 
-    test = java_code[0]
-    req = GPT.send_request("Java", test, "What might be the input to this function? Give me some examples.")
+    test = "int doMath(int a, int b){\nint c = a+b;\na++;\nb = a+c;\nreturn (b+a)*c;\n}"
+    req = GPT.send_request("Java", test, "Generate a unit test for the snippet above.")
     print(req)
 
 
