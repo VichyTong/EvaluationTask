@@ -1,15 +1,15 @@
 * [Evaluation Task Log](#evaluation-task-log)
-   * [April 10th](#april-10th)
-      * [Conversation Log](#conversation-log)
-   * [April 11th](#april-11th)
-      * [Some Phenomenon Found](#some-phenomenon-found)
-      * [Papers Found](#papers-found)
-      * [Next Step](#next-step)
-   * [April 12th](#april-12th)
-      * [Difference Between ChatGPT and GPT-3.5-turbo API](#difference-between-chatgpt-and-gpt-35-turbo-api)
-      * [Decompose the Question](#decompose-the-question)
-   * [April 13th](#april-13th)
-      * [Help GPT with Math](#help-gpt-with-math)
+  * [April 10th](#april-10th)
+    * [Conversation Log](#conversation-log)
+  * [April 11th](#april-11th)
+    * [Some Phenomenon Found](#some-phenomenon-found)
+    * [Papers Found](#papers-found)
+    * [Next Step](#next-step)
+  * [April 12th](#april-12th)
+    * [Difference Between ChatGPT and GPT-3.5-turbo API](#difference-between-chatgpt-and-gpt-35-turbo-api)
+    * [Decompose the Question](#decompose-the-question)
+  * [April 13th](#april-13th)
+    * [Help GPT with Math](#help-gpt-with-math)
 
 
 # Evaluation Task Log
@@ -258,9 +258,8 @@ graph TB
 	D[Get the unit test]
 	A --> B
 	B --> 1
-	B --> 2
 	B --> 3
-	1 --> C
+	1 --> 2
 	2 --> C
 	3 --> C
 	C --> D
@@ -363,3 +362,78 @@ Here's some example after I made the changes:
 ```
 
 In this kind of prompt, GPT can handle the math calculation.
+
+### Bad News
+
+This version prompt fails on the random Java code from the dataset.
+
+```
+./log/log.jsonl line 179 (part selected)
+Code Snippets:
+  Protected void assignCoordinateTransforms(NetcdfDataset ncDataset) {
+    super.assignCoordinateTransforms(ncDataset);
+
+    // any cs whose got a vertical coordinate with no units
+    List<CoordinateSystem> csys = ncDataset.getCoordinateSystems();
+    for (CoordinateSystem cs : csys) {
+      if (cs.getZaxis() != null) {
+        String units = cs.getZaxis().getUnitsString();
+        if ((units == null) || (units.trim().length() == 0)) {
+          VerticalCT vct = makeWRFEtaVerticalCoordinateTransform(ncDataset, cs);
+          if (vct != null)
+            cs.addCoordinateTransform(vct);
+          parseInfo.format("***Added WRFEta verticalCoordinateTransform to %s%n", cs.getName());
+        }
+      }
+    }
+  }
+Response:
+This code is a method that takes a NetcdfDataset object as a parameter and assigns coordinate transforms to it. 
+
+The method first calls the superclass's assignCoordinateTransforms method. 
+
+Then it gets a list of CoordinateSystem objects from the NetcdfDataset object. 
+
+For each CoordinateSystem object, it checks if it has a vertical coordinate with no units. If it does, it creates a VerticalCT object using the makeWRFEtaVerticalCoordinateTransform method and adds it to the CoordinateSystem object. 
+
+Finally, it prints out a message indicating that the WRFEta verticalCoordinateTransform has been added to the CoordinateSystem object. 
+
+[ANS]: {"param": [{"name": "ncDataset", "type": "NetcdfDataset"}], "examples":[{"ncDataset": "example.nc"}]}
+```
+
+Obviously, GPT failed to generate the correct input, but it can't generate the correct input because it doesn't know what the `NetcdfDataset` type in the input parameter is. So it just mocked it by `example.nc`, but this method makes it impossible for the output to be correct.
+
+**CODE SNIPPETS FROM THE DATASET ARE TOTALLY DIFFERENT FROM THE GIVEN MATH CODE.**
+
+Most of our test codes are excerpts of engineering codes, which refer to a lot of classes and variables that are not mentioned. That's a difficult task for both humans & GPT. :(
+
+### Some Solutions
+
+- It is impossible for humans to accomplish such a task, so maybe we should offer the necessary information to GPT.
+
+- What kind of information is useful for humans? Documents, source codes, maybe Stackoverflow?
+
+- Is using Google or Bing to search this information for GPT a good choice?
+
+  Search is added as a new step in our workflow.
+
+```mermaid
+graph TB
+	A[Input]
+	Add[Search some information for GPT]
+	B[Analyze the code line by line]
+	1[Generate the input]
+	2[Reasoning the output]
+	3[Generate unit test framework]
+	C[Fill the input and output in the framework]
+	D[Get the unit test]
+	A --> Add
+	Add --> B
+	B --> 1
+	B --> 3
+	1 --> 2
+	2 --> C
+	3 --> C
+	C --> D
+```
+

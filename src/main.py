@@ -20,7 +20,9 @@ def read_code():
 def main():
     read_code()
 
-    test = "int doMath(int a, int b){\nint c = a+b;\na++;\nb = a+c;\nreturn (b+a)*c;\n}"
+    test = java_code[0]
+    GPT.get_information("Java", test)
+
     req = GPT.get_input("Java", test)
     print(req)
     ans = []

@@ -1,6 +1,9 @@
 import json
 import os
 import openai
+import requests
+
+import google_search
 
 openai.api_key = os.environ['OPENAI_API_KEY']
 
@@ -84,3 +87,21 @@ def get_output(language, code, input_param):
             else:
                 return None
     return ans
+
+
+def get_information(language, code):
+    messages = [
+        {"role": "system",
+         "content": "You are a helpful assistant. You will be given a code in " + language + ". What do you want to know about this code as you're required to generate a input and a output for it."},
+        {"role": "user", "content": "private double findAttributeDouble(NetcdfDataset ds, String attname) {\nAttribute att = ds.findGlobalAttributeIgnoreCase(attname);\nif (att == null) return Double.NaN;\nreturn att.getNumericValue().doubleValue();\n}"},
+        {"role": "assistant", "content": '["NetcdfDataset", "findGlobalAttributeIgnoreCase", "getNumericValue", "doubleValue"]'},
+        {"role": "user", "content": code},
+    ]
+    res = send_request("gpt-3.5-turbo", messages, 0, 1)
+    questions = json.loads(res)
+    print(questions)
+    messages = [
+        {"role": "system", "content": "Do you know what is " + questions[0] + "? Give the original code."}
+    ]
+    res = send_request("gpt-3.5-turbo", messages, 0, 1)
+    print(res)
