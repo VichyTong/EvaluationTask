@@ -1,14 +1,13 @@
 * [Evaluation Task Log](#evaluation-task-log)
-   * [April 10th](#april-10th)
-      * [Conversation Log](#conversation-log)
-   * [April 11th](#april-11th)
-      * [Some Phenomenon Found](#some-phenomenon-found)
-      * [Papers](#papers)
-      * [Next Step](#next-step)
-   * [April 12th](#april-12th)
-      * [Difference Between ChatGPT and GPT-3.5-turbo API](#difference-between-chatgpt-and-gpt-35-turbo-api)
-      * [Decompose](#decompose)
-
+  * [April 10th](#april-10th)
+    * [Conversation Log](#conversation-log)
+  * [April 11th](#april-11th)
+    * [Some Phenomenon Found](#some-phenomenon-found)
+    * [Papers Found](#papers-found)
+    * [Next Step](#next-step)
+  * [April 12th](#april-12th)
+    * [Difference Between ChatGPT and GPT-3.5-turbo API](#difference-between-chatgpt-and-gpt-35-turbo-api)
+    * [Decompose the Question](#decompose-the-question)
 
 # Evaluation Task Log
 
@@ -136,7 +135,7 @@ On the first day's test, I tried to generate a unit test for some math calculati
 
 Maybe because GPT learned a lot of data from the open source codes, it can generate a good code frame. In the example below, GPT generates the right code frame using `@test` and can import the right package.
 
-### Papers
+### Papers Found
 
 - [Large Language Models are Zero-Shot Reasoners](https://arxiv.org/abs/2205.11916)
 
@@ -231,7 +230,7 @@ public class DoMathTest {
 
 Although it is wrong, at least it tries to reason.
 
-### Decompose
+### Decompose the Question
 
 We need to decompose these three questions.
 
@@ -243,7 +242,7 @@ We need to decompose these three questions.
 
 Question 2 is based on question 1, what's new is that question 2 needs GPT to generate the input. 
 
-Because I don't want to generate the input by myself, let's think about question 2 first.
+Because I don't want to generate the input by myself, let's think about generating the input first.
 
 ```mermaid
 graph TB
@@ -263,3 +262,101 @@ graph TB
 	3 --> C
 	C --> D
 ```
+
+## April 13th
+
+### Help GPT with Math
+
+I really can't stand the POOR calculation ability of GPT, so I designed a method to separate the calculation and reasoning of GPT.
+
+The example given to GPT has contained some special marks `>>>` and `<<<`, these marks mean GPT needs my Python program to handle the response.
+
+I simply throw the math expression into eval() function and GPT can get rid of the complex calculating.
+
+Here's some example after I made the changes:
+
+```
+./log/log.jsonl line 173
+{
+    "request":{
+        "model":"gpt-3.5-turbo",
+        "messages":[
+            {
+                "role":"system",
+                "content":"You are a helpful assistant. You will be given a code in Java. Give the correct output for given input. Print output begin with [ANS]: "
+            },
+            {
+                "role":"user",
+                "content":"int doMath(int a, int b){\na ++;\nint c = (a+b) * a;\nreturn c;\n}"
+            },
+            {
+                "role":"user",
+                "content":"INPUT: [{\"a\": 1, \"b\": 2}, {\"a\": 2333, \"b\": -2000}"
+            },
+            {
+                "role":"assistant",
+                "content":"First, we increase a by 1.\nThen, we add a to b, and then multiply the result by a, we assign c by this result.\nFinally, we return c.\n1. {\"a\": 1, \"b\": 2}\na++ >>> 1 + 1 <<< 2\nSO a = 2\nc = (a + b) * a >>> (2 + 2) * 2 <<< 8\nSO c = 8\nreturn value is c\n>>> [ANS] = 8 <<<\n2. {\"a\": 2333, \"b\": -2000}\na++ >>> 2333 + 1 <<< 2334\nSO a = 2334\nc = (a + b) * a >>> (2334 + (-2000)) * 2334 <<< 779556\nSO c = 779556\nreturn value is c\n>>> [ANS] = 779556 <<<"
+            },
+            {
+                "role":"user",
+                "content":"int doMath(int a, int b){\nint c = a+b;\na++;\nb = a+c;\nreturn (b+a)*c;\n}"
+            },
+            {
+                "role":"user",
+                "content":"INPUT: {\"a\": 2333, \"b\": -2000}"
+            },
+            {
+                "role":"assistant",
+                "content":"Let's think step by step.First, we add a and b and assign the result to c.\nThen, we increase a by 1.\nAfter that, we add a and c and assign the result to b.\nFinally, we multiply (b+a) by c and return the result.\n\n{\"a\": 2333, \"b\": -2000}\nc = a + b >>> 2333 + (-2000) <<<333\na++ >>> 2333 + 1 <<<2334\nb = a + c >>> 2334 + 333 <<<2667\n(b+a)*c >>> (2667 + 2334) * 333 <<<1665333\n"
+            }
+        ],
+        "temperature":0,
+        "top_p":1
+    },
+    "response":"[ANS]: 1665333"
+}
+```
+
+```
+./log/log.jsonl line 178
+{
+    "request":{
+        "model":"gpt-3.5-turbo",
+        "messages":[
+            {
+                "role":"system",
+                "content":"You are a helpful assistant. You will be given a code in Java. Give the correct output for given input. Print output begin with [ANS]: "
+            },
+            {
+                "role":"user",
+                "content":"int doMath(int a, int b){\na ++;\nint c = (a+b) * a;\nreturn c;\n}"
+            },
+            {
+                "role":"user",
+                "content":"INPUT: [{\"a\": 1, \"b\": 2}, {\"a\": 2333, \"b\": -2000}"
+            },
+            {
+                "role":"assistant",
+                "content":"First, we increase a by 1.\nThen, we add a to b, and then multiply the result by a, we assign c by this result.\nFinally, we return c.\n1. {\"a\": 1, \"b\": 2}\na++ >>> 1 + 1 <<< 2\nSO a = 2\nc = (a + b) * a >>> (2 + 2) * 2 <<< 8\nSO c = 8\nreturn value is c\n>>> [ANS] = 8 <<<\n2. {\"a\": 2333, \"b\": -2000}\na++ >>> 2333 + 1 <<< 2334\nSO a = 2334\nc = (a + b) * a >>> (2334 + (-2000)) * 2334 <<< 779556\nSO c = 779556\nreturn value is c\n>>> [ANS] = 779556 <<<"
+            },
+            {
+                "role":"user",
+                "content":"int doMath(int a, int b){\nint c = a+b;\na++;\nb = a+c;\nreturn (b+a)*c;\n}"
+            },
+            {
+                "role":"user",
+                "content":"INPUT: {\"a\": -3244, \"b\": 2345}"
+            },
+            {
+                "role":"assistant",
+                "content":"Let's think step by step.First, we add a and b and assign the result to c.\nThen, we increase a by 1.\nAfter that, we add a and c and assign the result to b.\nFinally, we multiply (b+a) by c and return the result.\nSo, let's apply these steps to the given input:\na = -3244, b = 2345\nc = a + b >>> -3244 + 2345 <<<-899\na++ >>> -3244 + 1 <<<-3243\nb = a + c >>> -3243 + (-899) <<<-4142\n(b+a)*c >>> (-4142 + (-3243)) * (-899) <<<6639115\n"
+            }
+        ],
+        "temperature":0,
+        "top_p":1
+    },
+    "response":"[ANS]: 6639115"
+}
+```
+
+In this kind of prompt, GPT can handle the math calculation.
